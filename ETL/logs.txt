@@ -1,0 +1,71 @@
+Comments:
+RC_2025-01.zst ---> RC_2025-01_filtered.json
+Finished! seen=332,166,587 kept=390,633 bad_json=0
+Output: /Users/hao/732_datasets/project/reddit/comments/RC_2025-01_filtered.json
+RC_2025-01_filtered.json ---> Spark-RDD
+[INFO] total lines: 390633, kept after filter: 390633
+[OK] wrote cleaned comments to: /Users/hao/732_datasets/project/reddit/cleaned/comments/2025-01
+
+RC_2025-02.zst ---> RC_2025-02_filtered.json
+Finished! seen=304,401,351 kept=500,708 bad_json=0
+Output: /Users/hao/732_datasets/project/reddit/comments/RC_2025-02_filtered.json
+[INFO] total lines: 500708, kept after filter: 500708
+[OK] wrote cleaned comments to: /Users/hao/732_datasets/project/reddit/cleaned/comments/2025-02
+
+RC_2025-03.zst ---> RC_2025-03_filtered.json
+Finished! seen=325,815,738 kept=665,246 bad_json=0
+Output: /Users/hao/732_datasets/project/reddit/comments/RC_2025-03_filtered.json
+[INFO] total lines: 665246, kept after filter: 665246
+[OK] wrote cleaned comments to: /Users/hao/732_datasets/project/reddit/cleaned/comments/2025-03
+
+RC_2025-04.zst ---> RC_2025-04_filtered.json
+Finished! seen=310,487,808 kept=582,019 bad_json=0
+Output: /Users/hao/732_datasets/project/reddit/comments/RC_2025-04_filtered.json
+[INFO] total lines: 582019, kept after filter: 582019
+[OK] wrote cleaned comments to: /Users/hao/732_datasets/project/reddit/cleaned/comments/2025-04
+
+--------------------------------------------------------------------------------------------------------
+
+Submissions:
+RS_2025-01.zst ---> RS_2025-01_filtered.json
+Finished submissions! seen=39,909,709 kept=9,519 bad_json=0
+Output: /Users/hao/732_datasets/project/reddit/submissions/RS_2025-01_filtered.json
+[INFO] total submissions lines: 9519, kept after filter: 9519
+[OK] wrote cleaned submissions to: /Users/hao/732_datasets/project/reddit/cleaned/submissions/2025-01
+
+RS_2025-02.zst ---> RS_2025-02_filtered.json
+Finished submissions! seen=36,176,028 kept=15,062 bad_json=0
+Output: /Users/hao/732_datasets/project/reddit/submissions/RS_2025-02_filtered.json
+[INFO] total submissions lines: 15062, kept after filter: 15062
+[OK] wrote cleaned submissions to: /Users/hao/732_datasets/project/reddit/cleaned/submissions/2025-02
+
+RS_2025-03.zst ---> RS_2025-03_filtered.json
+Finished submissions! seen=39,643,365 kept=17,178 bad_json=0
+Output: /Users/hao/732_datasets/project/reddit/submissions/RS_2025-03_filtered.json
+[INFO] total submissions lines: 17178, kept after filter: 17178
+[OK] wrote cleaned submissions to: /Users/hao/732_datasets/project/reddit/cleaned/submissions/2025-03
+
+RS_2025-04.zst ---> RS_2025-04_filtered.json
+Finished submissions! seen=38,781,238 kept=13,937 bad_json=0
+Output: /Users/hao/732_datasets/project/reddit/submissions/RS_2025-04_filtered.json
+[INFO] total submissions lines: 13937, kept after filter: 13937
+[OK] wrote cleaned submissions to: /Users/hao/732_datasets/project/reddit/cleaned/submissions/2025-04
+
+--------------------------------------------------------------------------------------------------------
+
+Joined:
+[INFO] comments with matched post  : 386880
+[INFO] comments with NO matched post: 3753
+[OK] wrote joined comments to: /Users/hao/732_datasets/project/reddit/joined/2025-01
+
+[INFO] comments with matched post  : 492476
+[INFO] comments with NO matched post: 8232
+[OK] wrote joined comments to: /Users/hao/732_datasets/project/reddit/joined/2025-02
+
+[INFO] comments with matched post  : 656329
+[INFO] comments with NO matched post: 8917
+[OK] wrote joined comments to: /Users/hao/732_datasets/project/reddit/joined/2025-03
+
+[INFO] comments with matched post  : 572651
+[INFO] comments with NO matched post: 9368
+[OK] wrote joined comments to: /Users/hao/732_datasets/project/reddit/joined/2025-04
