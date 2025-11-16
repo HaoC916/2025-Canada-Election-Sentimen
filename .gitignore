@@ -213,3 +213,9 @@ joined_rdd/*
 # Ignore parquet/json output
 output/
 output/**
+results/
+
+# Ignore testing files
+testing_files/
+
+.DS_Store
