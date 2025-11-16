@@ -205,3 +205,11 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Ignore joined_rdd dataset folders
+joined_rdd/
+joined_rdd/*
+
+# Ignore parquet/json output
+output/
+output/**
