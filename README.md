@@ -75,7 +75,7 @@ data/cleaned/joined_rdd/YYYY-MM/
 ## 2. Baseline Sentiment (VADER)
 
 ```
-python sentiment/vader_sentiment.py
+python sentiment/baseline_sentiment.py
 ```
 
 Output saved to:
@@ -195,6 +195,6 @@ This repository contains the full reproducible pipeline required for:
 ---
 
 # 👥 Authors
-
+[][][]
 CMPT 732 Group — Fall 2025  
 SFU School of Computing Science
