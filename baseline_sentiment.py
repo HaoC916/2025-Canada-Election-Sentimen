@@ -1,120 +1,153 @@
-# ---------------------------------------------------------
-# CMPT 732 Final Project — Baseline Sentiment Analysis
-# Using VADER sentiment on cleaned Reddit comments
-# ---------------------------------------------------------
-
+import re
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
-from pyspark.sql.types import FloatType, StringType
+from pyspark.sql.types import (
+    MapType, StringType, FloatType
+)
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-# ---------------------------------------------------------
-# 1. Spark Session
-# ---------------------------------------------------------
-spark = SparkSession.builder \
-    .appName("RedditBaselineSentiment") \
-    .getOrCreate()
 
 # ---------------------------------------------------------
-# 2. Load cleaned comments dataset
-# (Replace the path with your actual clean data file)
+# 0. Initialize Spark + VADER
 # ---------------------------------------------------------
-df = spark.read.json("clean_comments.json")   # or .parquet("clean_comments.parquet")
 
-# Schema expectation:
-# id, link_id_short, parent_id, subreddit, author,
-# created_utc, score, body, permalink, title
-
-print("Loaded records:", df.count())
-
-# ---------------------------------------------------------
-# 3. Register VADER UDF
-# ---------------------------------------------------------
+spark = SparkSession.builder.appName("VADER Targeted Sentiment").getOrCreate()
 
 analyzer = SentimentIntensityAnalyzer()
 
-def vader_score(text):
+
+# ---------------------------------------------------------
+# 1. Define Party Keyword Dictionaries
+# ---------------------------------------------------------
+
+LIBERAL_KW = [
+    "trudeau", "justin trudeau", "liberal", "liberals",
+    "lpc", "carney", "freeland", "chrystia freeland"
+]
+
+CONSERVATIVE_KW = [
+    "poilievre", "pierre poilievre", "conservative",
+    "conservatives", "cpc", "tory", "tories"
+]
+
+NDP_KW = [
+    "ndp", "new democratic", "singh", "jagmeet", "jagmeet singh"
+]
+
+PARTY_KEYWORDS = {
+    "Liberal": LIBERAL_KW,
+    "Conservative": CONSERVATIVE_KW,
+    "NDP": NDP_KW
+}
+
+
+# ---------------------------------------------------------
+# 2. Targeted VADER Function (Python)
+# ---------------------------------------------------------
+
+def targeted_vader_sentiment(text):
+    """
+    Given full comment text, detect party keywords, extract
+    sentence windows for each party, and compute separate
+    VADER sentiment scores per party.
+    """
     if text is None:
-        return 0.0
-    try:
-        return float(analyzer.polarity_scores(text)["compound"])
-    except:
-        return 0.0
+        return {}
 
-vader_udf = F.udf(vader_score, FloatType())
+    text = text.lower()
+
+    # Split into rough sentences
+    sentences = re.split(r'[.!?]', text)
+
+    result = {}
+
+    for party, keywords in PARTY_KEYWORDS.items():
+
+        # Collect all sentences mentioning this party
+        party_sents = []
+        for s in sentences:
+            for k in keywords:
+                pattern = rf'\b{k}\b'
+                if re.search(pattern, s):
+                    party_sents.append(s.strip())
+                    break  # avoid double-adding same sentence
+
+        if len(party_sents) == 0:
+            continue
+        
+        party_text = " ".join(party_sents).strip()
+
+        if len(party_text) > 0:
+            score = analyzer.polarity_scores(party_text)['compound']
+            result[party] = float(score)
+
+    return result
+
 
 # ---------------------------------------------------------
-# 4. Apply VADER to compute sentiment
+# 3. Register Spark UDF
 # ---------------------------------------------------------
 
-df_sent = df.withColumn("sentiment", vader_udf(F.col("body")))
+sentiment_udf = F.udf(
+    targeted_vader_sentiment,
+    MapType(StringType(), FloatType())
+)
+
 
 # ---------------------------------------------------------
-# 5. Convert time → date, week-of-year
+# 4. Load Your Joined Dataset
+# joined_rdd/2025-01, joined_rdd/2025-02, ... for each month
+# joined_rdd/2025-* for all months
 # ---------------------------------------------------------
 
-df_sent = (
-    df_sent
-    .withColumn("date", F.from_unixtime("created_utc"))
+df = spark.read.json("joined_rdd/2025-01")
+
+# Combine title + body for better context
+df = df.withColumn(
+    "full_text",
+    F.concat_ws(" ", F.col("title"), F.col("body"))
+)
+
+
+# ---------------------------------------------------------
+# 5. Apply Targeted VADER per Comment
+# ---------------------------------------------------------
+
+df_with_sentiment = df.withColumn(
+    "party_sentiment",
+    sentiment_udf("full_text")
+)
+
+
+# ---------------------------------------------------------
+# 6. Explode to One Row per (comment, party)
+# ---------------------------------------------------------
+
+df_exploded = (
+    df_with_sentiment
+    .select(
+        "*",
+        F.explode("party_sentiment").alias("party", "sentiment")
+    )
+    .drop("party_sentiment")
+)
+
+
+# ---------------------------------------------------------
+# 7. Add Date / Week for Time-Series Aggregation
+# ---------------------------------------------------------
+
+df_final = (
+    df_exploded
+    .withColumn("date", F.from_unixtime("created_utc").cast("date"))
     .withColumn("week", F.weekofyear("date"))
-    .withColumn("year", F.year("date"))
 )
 
-# ---------------------------------------------------------
-# 6. Party tagging from title keywords
-# ---------------------------------------------------------
-
-def detect_party(title):
-    if title is None:
-        return "Other"
-    t = title.lower()
-    if "trudeau" in t or "liberal" in t or "lpc" in t:
-        return "Liberal"
-    if "poilievre" in t or "conservative" in t or "cpc" in t:
-        return "Conservative"
-    if "ndp" in t:
-        return "NDP"
-    return "Other"
-
-party_udf = F.udf(detect_party, StringType())
-
-df_tagged = df_sent.withColumn("party", party_udf("title"))
 
 # ---------------------------------------------------------
-# 7. Weekly sentiment per subreddit
+# 8. Save Final Output
 # ---------------------------------------------------------
 
-weekly_subreddit = (
-    df_tagged
-    .groupBy("subreddit", "year", "week")
-    .agg(
-        F.avg("sentiment").alias("avg_sentiment"),
-        F.count("*").alias("num_comments")
-    )
-    .orderBy("subreddit", "year", "week")
-)
+df_final.write.mode("overwrite").json("results/vader_targeted")
 
-# ---------------------------------------------------------
-# 8. Weekly sentiment per party
-# ---------------------------------------------------------
-
-weekly_party = (
-    df_tagged
-    .groupBy("party", "year", "week")
-    .agg(
-        F.avg("sentiment").alias("avg_sentiment"),
-        F.count("*").alias("num_comments")
-    )
-    .orderBy("party", "year", "week")
-)
-
-# ---------------------------------------------------------
-# 9. Save outputs (for visualization & report)
-# ---------------------------------------------------------
-
-weekly_subreddit.write.mode("overwrite").json("output/weekly_subreddit_sentiment")
-weekly_party.write.mode("overwrite").json("output/weekly_party_sentiment")
-
-print("Sentiment analysis complete!")
-print("Outputs saved under: ./output/")
-spark.stop()
+print("Saved targeted VADER sentiment pipeline output → results/vader_targeted")
