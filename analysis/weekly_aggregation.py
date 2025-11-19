@@ -1,27 +1,25 @@
+# ---------------------------------------------------------
+# Compute weekly sentiment from extracted targeted sentences
+
 from pyspark.sql import SparkSession
-from pyspark.sql import functions as F
+import pyspark.sql.functions as F
 
-spark = SparkSession.builder.appName("Weekly Sentiment Aggregation").getOrCreate()
+spark = SparkSession.builder.appName("Weekly Sentiment Aggregation - Vader").getOrCreate()
 
-# Load your VADER sentiment output
-df = spark.read.json("results/vader_targeted")
+df = spark.read.json("results/vader_scored")
 
-# Weighted sentiment: sentiment * log(1 + score)
-df = df.withColumn(
-    "weighted_sent",
-    F.col("sentiment") * F.log(1 + F.col("score"))
-)
+df = df.filter(F.col("party").isNotNull())
 
-# Weekly aggregation
-df_weekly = (
+# ---------------- Weekly aggregation ----------------
+weekly = (
     df.groupBy("party", "week")
       .agg(
-          F.avg("sentiment").alias("avg_sentiment"),
-          F.avg("weighted_sent").alias("weighted_sentiment"),
+          F.avg("vader_score").alias("avg_sentiment"),
           F.count("*").alias("comment_volume")
       )
       .orderBy("party", "week")
 )
 
-df_weekly.write.mode("overwrite").json("results/weekly_sentiment")
-print("Saved → results/weekly_sentiment")
+weekly.write.mode("overwrite").json("results/vader_sentiment_weekly")
+
+print("✓ Saved WEEKLY sentiment → results/vader_sentiment_weekly")
