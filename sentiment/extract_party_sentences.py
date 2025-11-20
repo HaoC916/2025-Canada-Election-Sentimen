@@ -16,10 +16,13 @@ PARTY_KEYWORDS = {
     ],
     "Conservative": [
         "poilievre","pierre poilievre","conservative",
-        "conservatives","cpc","tory","tories"
+        "conservatives","cpc","tory","tories",
+        "trump","maga", "right wing", "right-wing", "right populist",
+        "far right", "lower taxes","inflation", "pp",
     ],
     "NDP": [
-        "ndp","new democratic","singh","jagmeet","jagmeet singh"
+        "ndp","new democratic","singh","jagmeet","jagmeet singh",
+        "orange crush", "progressive left", "left wing", "left-wing"
     ]
 }
 
@@ -96,6 +99,6 @@ df_final = (
 # 5. Save
 # ---------------------------------------------------------
 
-df_final.write.mode("overwrite").json("results/party_target")
+df_final.write.mode("overwrite").json("results/party_target_ updated_keywords")
 
-print("Saved → results/party_target")
+print("Saved → results/party_target_updated_keywords")
