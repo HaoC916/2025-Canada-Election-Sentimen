@@ -1,25 +1,92 @@
-# ---------------------------------------------------------
-# Compute weekly sentiment from extracted targeted sentences
+# =============================================================
+# Weekly Aggregation for Transformer + VADER Sentiment
+# =============================================================
 
 from pyspark.sql import SparkSession
 import pyspark.sql.functions as F
 
-spark = SparkSession.builder.appName("Weekly Sentiment Aggregation - Vader").getOrCreate()
+spark = SparkSession.builder.appName("Weekly Sentiment Aggregation").getOrCreate()
 
-df = spark.read.json("results/vader_scored")
+df = spark.read.json("results/trans_vader_scored")
 
 df = df.filter(F.col("party").isNotNull())
 
-# ---------------- Weekly aggregation ----------------
+# -------------------------------------------------------------
+# Convert transformer class → indicator columns
+#     0 = negative, 1 = neutral, 2 = positive
+# -------------------------------------------------------------
+df = (
+    df.withColumn("is_neg", F.when(F.col("trans_sentiment") == 0, 1).otherwise(0))
+      .withColumn("is_neu", F.when(F.col("trans_sentiment") == 1, 1).otherwise(0))
+      .withColumn("is_pos", F.when(F.col("trans_sentiment") == 2, 1).otherwise(0))
+)
+
+# -------------------------------------------------------------
+# Weekly aggregation (per party, per week)
+# -------------------------------------------------------------
 weekly = (
     df.groupBy("party", "week")
       .agg(
-          F.avg("vader_score").alias("avg_sentiment"),
+          F.avg("vader_score").alias("vader_avg"),
+          F.sum("is_pos").alias("pos_count"),
+          F.sum("is_neg").alias("neg_count"),
+          F.sum("is_neu").alias("neu_count"),
           F.count("*").alias("comment_volume")
       )
-      .orderBy("party", "week")
 )
 
-weekly.write.mode("overwrite").json("results/vader_sentiment_weekly")
+# -------------------------------------------------------------
+# Convert raw counts → ratios
+# -------------------------------------------------------------
+weekly = weekly.withColumn(
+    "total",
+    F.col("pos_count") + F.col("neg_count") + F.col("neu_count")
+)
 
-print("✓ Saved WEEKLY sentiment → results/vader_sentiment_weekly")
+weekly = (
+    weekly.withColumn("trans_pos_ratio", F.col("pos_count") / F.col("total"))
+          .withColumn("trans_neg_ratio", F.col("neg_count") / F.col("total"))
+          .withColumn("trans_neu_ratio", F.col("neu_count") / F.col("total"))
+)
+
+weekly = weekly.orderBy("party", "week")
+
+
+weekly.write.mode("overwrite").json("results/sentiment_weekly")
+
+print("✓ Saved WEEKLY sentiment → results/sentiment_weekly")
+
+# -------------------------------------------------------------
+# Daily aggregation (per party, per week)
+# -------------------------------------------------------------
+daily = (
+    df.groupBy("party", "date")
+      .agg(
+          F.avg("vader_score").alias("vader_avg"),
+          F.sum("is_pos").alias("pos_count"),
+          F.sum("is_neg").alias("neg_count"),
+          F.sum("is_neu").alias("neu_count"),
+          F.count("*").alias("comment_volume")
+      )
+)
+
+# -------------------------------------------------------------
+# Convert raw counts → ratios
+# -------------------------------------------------------------
+daily = daily.withColumn(
+    "total",
+    F.col("pos_count") + F.col("neg_count") + F.col("neu_count")
+)
+
+daily = (
+    daily.withColumn("trans_pos_ratio", F.col("pos_count") / F.col("total"))
+          .withColumn("trans_neg_ratio", F.col("neg_count") / F.col("total"))
+          .withColumn("trans_neu_ratio", F.col("neu_count") / F.col("total"))
+)
+
+daily = daily.orderBy("party", "date")
+
+
+daily.write.mode("overwrite").json("results/sentiment_daily")
+
+print("✓ Saved DAILY sentiment → results/sentiment_daily")
