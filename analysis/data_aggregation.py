@@ -7,7 +7,7 @@ import pyspark.sql.functions as F
 
 spark = SparkSession.builder.appName("Weekly Sentiment Aggregation").getOrCreate()
 
-df = spark.read.json("results/trans_vader_scored")
+df = spark.read.json("results/vader_tran_scored_updated_key")
 
 df = df.filter(F.col("party").isNotNull())
 
@@ -52,9 +52,9 @@ weekly = (
 weekly = weekly.orderBy("party", "week")
 
 
-weekly.write.mode("overwrite").json("results/sentiment_weekly")
+weekly.write.mode("overwrite").json("results/sentiment_weekly_updated_key")
 
-print("✓ Saved WEEKLY sentiment → results/sentiment_weekly")
+print("✓ Saved WEEKLY sentiment → results/sentiment_weekly_updated_key")
 
 # -------------------------------------------------------------
 # Daily aggregation (per party, per week)
@@ -87,6 +87,6 @@ daily = (
 daily = daily.orderBy("party", "date")
 
 
-daily.write.mode("overwrite").json("results/sentiment_daily")
+daily.write.mode("overwrite").json("results/sentiment_daily_updated_key")
 
-print("✓ Saved DAILY sentiment → results/sentiment_daily")
+print("✓ Saved DAILY sentiment → results/sentiment_daily_updated_key")
