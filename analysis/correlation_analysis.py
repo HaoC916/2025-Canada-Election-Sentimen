@@ -12,8 +12,8 @@ import sys
 # ============================================================
 
 OUTPUT_DIR = "results"          # <--- 修改这里
-PLOT_DIR = os.path.join(OUTPUT_DIR, "plots_updated_keywords")
-LOG_FILE = os.path.join(OUTPUT_DIR, "output_log_updated_keywords.txt")
+PLOT_DIR = os.path.join(OUTPUT_DIR, "plots_old")
+LOG_FILE = os.path.join(OUTPUT_DIR, "output_log_old.txt")
 
 os.makedirs(PLOT_DIR, exist_ok=True)
 
@@ -37,8 +37,12 @@ sys.stdout = Tee(LOG_FILE)
 # 1. Load data
 # ============================================================
 
-sent_daily = pd.read_json("data/sentiment_daily_updated_key/part-00000-26623bf6-32d4-42a0-be59-19b77768579d-c000.json", lines=True)
-sent_weekly = pd.read_json("data/sentiment_weekly_updated_key/part-00000-781e3a70-de8c-4e41-b49b-ec42dfd96bbe-c000.json", lines=True)
+# sent_daily = pd.read_json("data/sentiment_daily_updated_key/part-00000-26623bf6-32d4-42a0-be59-19b77768579d-c000.json", lines=True)
+# sent_weekly = pd.read_json("data/sentiment_weekly_updated_key/part-00000-781e3a70-de8c-4e41-b49b-ec42dfd96bbe-c000.json", lines=True)
+
+sent_daily = pd.read_json("data/sentiment_daily/part-00000-d71794f2-a3cc-4580-8037-16a0a9af8fc0-c000.json", lines=True)
+sent_weekly = pd.read_json("data/sentiment_weekly/part-00000-bfe96b1c-7e79-4691-943b-29703d5791c9-c000.json", lines=True)
+
 
 polling = pd.read_csv("data/polling_averages.txt", sep="\s+")
 
