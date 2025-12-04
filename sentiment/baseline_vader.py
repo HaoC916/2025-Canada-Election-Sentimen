@@ -38,8 +38,7 @@ analyzer = SentimentIntensityAnalyzer()
 
 # ------------------------------------------------
 # 1. Load extracted targeted-sentence dataset
-# IMPORTANT NOTES:
-# The input path is currently HARD-CODED and MUST be modified before running
+# Used ChatGPT to help write codes
 # ------------------------------------------------
 #df = spark.read.json("results/tran_scored_updated_keywords") 
 input_path = sys.argv[1]      # path to <trans_scored_dir>  (output of 3b)
@@ -61,8 +60,6 @@ df_scored = df.withColumn("vader_score", vader_udf("targeted_sentence")).drop("f
 
 # ---------------------------------------------------------
 # 3. Save Final Output
-# IMPORTANT NOTES:
-# The output path is currently HARD-CODED and MUST be modified before running
 # ---------------------------------------------------------
 
 #df_scored.write.mode("overwrite").json("results/vader_tran_scored")

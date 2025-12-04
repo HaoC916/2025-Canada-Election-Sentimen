@@ -214,6 +214,7 @@ print(f"\nHeatmaps saved to: {PLOT_DIR}")
 
 # ============================================================
 # REGRESSION + PLOT
+# Used Cpilot to help write codes
 # ============================================================
 
 def regression_and_plot(df, party, sent_col, poll_col,

@@ -24,6 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ============================================
 # Helper: Load JSON folder with part-*.json files
+# Used ChatGPT to help write codes
 # ============================================
 def load_json_folder(rel_folder, pattern="part-*.json", time_col=None, int_cols=None, name=""):
     """
@@ -177,6 +178,7 @@ PARTIES = {
 
 # ============================================
 # Correlation calculation (lag 0, matches offline logic)
+# Used ChatGPT to help write codes
 # ============================================
 def compute_corr_table_daily(sent_daily: pd.DataFrame, poll_daily: pd.DataFrame) -> pd.DataFrame:
     """

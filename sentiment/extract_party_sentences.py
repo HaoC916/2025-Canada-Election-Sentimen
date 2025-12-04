@@ -58,6 +58,7 @@ PARTY_KEYWORDS = {
 
 # ---------------------------------------------------------
 # 2. Extract ALL sentences per party → merge them into one string
+# Used Copilot to help write codes
 # ---------------------------------------------------------
 
 def extract_party_text(text):
@@ -100,9 +101,7 @@ extract_udf = F.udf(extract_party_text, MapType(StringType(), StringType()))
 # ---------------------------------------------------------
 # 3. Load data
 # ---------------------------------------------------------
-# IMPORTANT NOTES:
-#    Input path is HARD-CODED and must be manually changed before running:
-#df = spark.read.json("joined_rdd/2025-*")
+# df = spark.read.json("joined_rdd/2025-*")
 df = spark.read.json(INPUT_DIR)
 
 df = df.withColumn(
@@ -130,8 +129,6 @@ df_final = (
 # ---------------------------------------------------------
 # 5. Save
 # ---------------------------------------------------------
-# IMPORTANT NOTES:
-#    Output path is HARD-CODED and must be manually changed before running:
 #df_final.write.mode("overwrite").json("results/party_target_ updated_keywords")
 df_final.write.mode("overwrite").json(OUTPUT_DIR)
 #print("Saved → results/party_target_updated_keywords")

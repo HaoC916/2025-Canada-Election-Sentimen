@@ -22,6 +22,7 @@ TARGET = {
     "lpc", "cpc", "ndp", "canadianconservative", "canadanews"
 }
 
+# Used Copilot to help write codes
 def stream_filter_submissions(infile, outfile):
     kept = 0
     seen = 0

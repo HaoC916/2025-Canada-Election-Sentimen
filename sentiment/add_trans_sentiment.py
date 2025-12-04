@@ -25,12 +25,7 @@ from tqdm import tqdm
 
 # -----------------------------------------
 # PATH CONFIG
-# IMPORTANT NOTES:
-#    This script uses HARD-CODED input/output paths.
-#    Before running, users MUST manually update:
-#        INPUT_DIR  = <path to party_target folder>
-#        OUTPUT_DIR = <path to save transformer sentiment outputs>
-#    Otherwise the script will NOT run or will read/write to incorrect locations.
+# Used ChatGPT to help write codes
 # -----------------------------------------
 
 #INPUT_DIR = r"E:\E\university\year6\cmpt732\cmpt732-project\joined_rdd\party_target"
@@ -90,6 +85,7 @@ def compute_sentiment(text):
 
 # -----------------------------------------
 # PROCESS FILES
+# Used ChatGPT to help debug codes
 # -----------------------------------------
 all_files = [f for f in os.listdir(INPUT_DIR) if f.endswith(".json")]
 print(f"Found {len(all_files)} JSON files.\n")
