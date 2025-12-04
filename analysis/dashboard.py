@@ -127,14 +127,24 @@ def load_polling():
 
 
 @st.cache_data
+# def load_scored():
+#     """Load sentence-level sentiment scored with VADER + Transformer."""
+#     df = load_json_folder(
+#         rel_folder="results/vader_tran_scored_updated_key",
+#         pattern="part-*.json",
+#         time_col="date",
+#         int_cols=["week"],
+#         name="SCORED_COMMENTS",
+#     )
+#     if "party" in df.columns:
+#         df["party"] = df["party"].astype(str)
+#     return df
+
+@st.cache_data
 def load_scored():
-    """Load sentence-level sentiment scored with VADER + Transformer."""
-    df = load_json_folder(
-        rel_folder="results/vader_tran_scored_updated_key",
-        pattern="part-*.json",
-        time_col="date",
-        int_cols=["week"],
-        name="SCORED_COMMENTS",
+    df = pd.read_json(
+        BASE_DIR / "data/vader_tran_scored_sample.json",
+        lines=True
     )
     if "party" in df.columns:
         df["party"] = df["party"].astype(str)
