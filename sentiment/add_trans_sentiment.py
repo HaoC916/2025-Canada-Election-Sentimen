@@ -22,8 +22,6 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 from tqdm import tqdm
 
-
-
 # -----------------------------------------
 # PATH CONFIG
 # IMPORTANT NOTES:

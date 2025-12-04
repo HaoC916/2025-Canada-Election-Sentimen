@@ -15,9 +15,23 @@
 """
 
 import re
+import sys
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.types import MapType, StringType
+
+# -------------------------------
+# 0. Parse arguments
+# -------------------------------
+if len(sys.argv) != 3:
+    print("Usage: spark-submit extract_party_sentences.py <input_dir> <output_dir>")
+    sys.exit(1)
+
+INPUT_DIR = sys.argv[1]     # e.g., results/joined_rdd/2025-*
+OUTPUT_DIR = sys.argv[2]    # e.g., results/party_target_updated_keywords
+
+print("INPUT_DIR :", INPUT_DIR)
+print("OUTPUT_DIR:", OUTPUT_DIR)
 
 spark = SparkSession.builder.appName("Extract Party Sentences").getOrCreate()
 
@@ -88,7 +102,8 @@ extract_udf = F.udf(extract_party_text, MapType(StringType(), StringType()))
 # ---------------------------------------------------------
 # IMPORTANT NOTES:
 #    Input path is HARD-CODED and must be manually changed before running:
-df = spark.read.json("joined_rdd/2025-*")
+#df = spark.read.json("joined_rdd/2025-*")
+df = spark.read.json(INPUT_DIR)
 
 df = df.withColumn(
     "full_text",
@@ -117,6 +132,7 @@ df_final = (
 # ---------------------------------------------------------
 # IMPORTANT NOTES:
 #    Output path is HARD-CODED and must be manually changed before running:
-df_final.write.mode("overwrite").json("results/party_target_ updated_keywords")
-
-print("Saved → results/party_target_updated_keywords")
+#df_final.write.mode("overwrite").json("results/party_target_ updated_keywords")
+df_final.write.mode("overwrite").json(OUTPUT_DIR)
+#print("Saved → results/party_target_updated_keywords")
+print(f"Saved → {OUTPUT_DIR}")

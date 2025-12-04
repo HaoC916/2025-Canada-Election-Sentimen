@@ -92,13 +92,13 @@ Each ZIP contains:
 joined_rdd/YYYY-MM/
     part-*.json
 
-If you download these files, you may skip all ETL steps and jump directly to:
+If you download these files, you may skip all ETL steps (step 1 & 2) and jump directly to:
 
 ➡ sentiment/extract_party_sentences.py
 
----------------------------------------------------------------------------------------------------
+---
 
-## 1. ETL
+## 1. ETL - Fast Pre-Filtering
 If you prefer to reproduce the ETL pipeline from scratch,
 you must first download raw Reddit dumps (January–April 2025):
 
@@ -125,66 +125,83 @@ spark-submit script.py <input_path> <output_path>
 
 
 🔹 Step 1a — Filter raw Reddit comments (.zst → filtered JSONL)
+```
 python ETL/filter_comments_zst.py <raw_comments_zst> <filtered_output_json>
+```
 
 Example:
+```
 python ETL/filter_comments_zst.py \
     /Users/ryan/datasets/reddit/comments/RC_2025-01.zst \
     /Users/ryan/datasets/reddit/comments/RC_2025-01_filtered.json
-
----------------------
+```
 
 🔹 Step 1b — Filter raw Reddit submissions (.zst → filtered JSONL)
+```
 python ETL/filter_submissions_zst.py <raw_submissions_zst> <filtered_output_json>
+```
 
 Example:
+```
 python ETL/filter_submissions_zst.py \
     /Users/ryan/datasets/reddit/submissions/RS_2025-01.zst \
     /Users/ryan/datasets/reddit/submissions/RS_2025-01_filtered.json
+```
 
----------------------
+---
 
+## 2. ETL - Spark ETL
 🔹 Step 2a — Spark cleaning of comments
+```
 spark-submit ETL/comments_filter.py <filtered_comments_json> <cleaned_output_dir>
+```
 
 Example:
+```
 spark-submit ETL/comments_filter.py \
     /Users/ryan/datasets/reddit/comments/RC_2025-01_filtered.json \
     /Users/ryan/datasets/reddit/cleaned/comments/2025-01
-
----------------------
+```
 
 🔹 Step 2b — Spark cleaning of submissions
+```
 spark-submit ETL/submissions_filter.py <filtered_submissions_json> <cleaned_output_dir>
+```
 
 Example:
+```
 spark-submit ETL/submissions_filter.py \
     /Users/ryan/datasets/reddit/submissions/RS_2025-01_filtered.json \
     /Users/ryan/datasets/reddit/cleaned/submissions/2025-01
-
-
----------------------
+```
 
 🔹 Step 2c — Join comments with submission titles
+```
 spark-submit ETL/join_titles.py <cleaned_comments_dir> <cleaned_submissions_dir> <joined_output_dir>
+```
 
 Example:
+```
 spark-submit ETL/join_titles.py \
     /Users/ryan/datasets/reddit/cleaned/comments/2025-01 \
     /Users/ryan/datasets/reddit/cleaned/submissions/2025-01 \
     /Users/ryan/datasets/reddit/joined/2025-01
-
----------------------------------------------------------------------------------------------------
-## 2. Baseline Sentiment (VADER)
-
-```
-python sentiment/baseline_sentiment.py
 ```
 
-Output saved to:
+---
+
+## 3. Sentiment 
+🔹 Step 3a — Extract Party Sentences
 
 ```
-results/vader_targeted/
+spark-submit sentiment/extract_party_sentences.py <joined_input_dir> <party_target_dir>
+```
+
+Example:
+```
+spark-submit sentiment/extract_party_sentences.py \
+    "/Users/ryan/732_datasets/project/reddit/joined/2025-*" \
+    "/Users/ryan/732_datasets/project/reddit/party_target/2025"
 ```
 
 ---
