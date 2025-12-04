@@ -29,8 +29,7 @@ election-sentiment-2025/
 │   ├── sentiment_weekly_updated_key/
 │   ├── polling_averages.txt
 │   ├── probability_winning.txt
-│   ├── vader_tran_scored_sample.json
-│   └── sample_scored.py
+│   └──  vader_tran_scored_sample.json
 │
 ├── ETL/
 │   ├── filter_comments_zst.py       # Step 1a: RC_YYYY-MM.zst → filtered JSONL
@@ -54,7 +53,7 @@ election-sentiment-2025/
 └── results/
     ├── vader_targeted/
     ├── transformer/
-    ├── weekly_sentiment/
+    ├── sentiment_daily/
     ├── sentiment_weekly/
     ├── merged/
     └── figures/
@@ -69,6 +68,16 @@ pip install -r requirements.txt
 ```
 
 ---
+
+# 🧪 Quick Test
+If you want to verify functionality without re-running Steps 1–3,
+all they need to run is:
+```
+python analysis/data_aggregation.py
+python analysis/correlation_analysis.py
+streamlit run analysis/dashboard.py
+```
+All of these use the sample data stored inside data/.
 
 # 🚀 Running the Full Pipeline
 
@@ -238,20 +247,90 @@ python sentiment/baseline_vader.py \
 ---
 
 ## 4. Analysis
+This stage performs:
 
+Weekly & Daily sentiment aggregation (Transformer + VADER)
 
-🔹 Step 4a Data Aggregation
+Correlation analysis against Canadian polling data
 
-🔹 Step 4b Correlation Analysis      
+Regression modeling
+
+Visualization (heatmaps + regression plots)
+
+Interactive dashboard using Streamlit
+
+You can run the analysis on either:
+
+Your own computed sentiment outputs (from Step 3), OR
+
+Our sample dataset included in data/ (recommended for quick testing).
+
+🔹 Step 4a — Weekly & Daily Aggregation
+
 ```
-python sentiment/transformer_sentiment.py
+python analysis/data_aggregation.py
 ```
 
-Output saved to:
+Input used by default:
+```
+data/vader_tran_scored_sample.json
+```
+
+Outputs:
+```
+results/sentiment_weekly_updated_key/
+results/sentiment_daily_updated_key/
+```
+These files become inputs for Step 4b.
+
+🔹 Step 4b Sentiment–Polling Correlation Analysis     
+```
+python analysis/correlation_analysis.py
+```
+
+This step:
+
+Computes Pearson & Spearman correlations
+
+Computes lag correlations
+
+Fits OLS regressions
+
+Saves all visualizations to:
 
 ```
-results/transformer/
+results/plots_old/
 ```
+
+and logs printed output to:
+```
+results/output_log_old.txt
+```
+
+🔹 Step 4c — Interactive Dashboard (Streamlit)
+
+To view the web-based dashboard:
+```
+streamlit run analysis/dashboard.py
+```
+
+Once running, open:
+
+👉 http://localhost:8501
+
+The dashboard includes:
+
+Weekly sentiment trends
+
+Daily sentiment trends
+
+Party comparisons
+
+Correlation visualizations
+
+Volume statistics
+
+Transformer vs VADER comparison
 
 ---
 

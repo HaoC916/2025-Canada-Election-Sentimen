@@ -1,16 +1,3 @@
-#streamlit==1.38.0
-#pandas==2.2.1
-#numpy==1.26.4
-#plotly==5.22.0
-#scipy==1.13.0
-#matplotlib==3.8.4
-#seaborn==0.13.2
-#pyarrow==15.0.0
-#zstandard
-#transformers
-#torch
-#tqdm
-
 # Web/Dashboard
 streamlit==1.38.0
 plotly==5.22.0
@@ -22,6 +9,7 @@ pandas==2.2.1
 numpy==1.26.4
 pyarrow==15.0.0
 scipy==1.13.0
+statsmodels
 
 # Spark for ETL + analysis
 pyspark==3.5.1
