@@ -190,7 +190,15 @@ spark-submit ETL/join_titles.py \
 
 ---
 
-## 3. Sentiment 
+## 3. Sentiment
+
+📦 (Optional) Skip Step 3 — Download Pre-Computed Sentiment Data
+
+If you do NOT want to rerun the Transformer/VADER scoring (very slow without GPU),
+download our pre-computed Step 3 output from Google Drive:
+
+👉 https://drive.google.com/file/d/1bXJ_JlQu_xzUsRbajEGasY8UCPJ51-57/view?usp=drive_link 
+
 🔹 Step 3a — Extract Party Sentences
 
 ```
@@ -244,58 +252,6 @@ Output saved to:
 ```
 results/transformer/
 ```
-
----
-
-# 🧠 Methods Summary
-
-### ✔ Data Cleaning  
-We filtered 3×10⁸ monthly Reddit comments down to ~5×10⁵ relevant political comments using:
-
-- Subreddit filtering  
-- Joining comments ↔ submissions (to attach titles)  
-- Lowercasing, null removal  
-- Adding full_text (title + body)
-
-### ✔ Baseline: Targeted VADER  
-We detect party-specific sentiment by:
-
-1. Extracting sentences containing party keywords  
-2. Running VADER only on those windows  
-3. Producing multi-label sentiment if multiple parties appear  
-4. Exploding into one row per (comment, party) for analysis
-
-### ✔ Transformer Model  
-RoBERTa-base fine-tuned on political sentiment datasets provides high-quality polarity scores.
-
-### ✔ Time-Series + Correlation  
-We group by:
-
-- (week, party)
-- mean sentiment  
-- compare against federal poll averages
-
----
-
-# 📊 Results Overview
-
-- Weekly sentiment clearly tracks several major political events  
-- Conservatives show higher variance around leadership discussions  
-- Liberals show polarized sentiment around Trudeau-related topics  
-- Transformer model produces smoother trends than VADER  
-- Correlation with polls varies by party (discussed in final report)
-
----
-
-# 📝 Project Summary
-
-This repository contains the full reproducible pipeline required for:
-
-- Cleaning and normalizing Reddit commentary  
-- Extracting political sentiment signals  
-- Aggregating by time  
-- Merging with real polling data  
-- Visualizing trends for election prediction analysis  
 
 ---
 

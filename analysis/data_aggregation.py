@@ -40,7 +40,7 @@ spark = SparkSession.builder.appName("Weekly Sentiment Aggregation").getOrCreate
 
 # Important Notes:
 #    Input path is HARD-CODED and must be manually changed before running:
-df = spark.read.json("data/vader_tran_scored_updated_key")
+df = spark.read.json("data/vader_tran_scored_sample.json")
 
 df = df.filter(F.col("party").isNotNull())
 
