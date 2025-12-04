@@ -1,3 +1,19 @@
+"""
+* Program: extract_party_sentences.py
+*
+* Modified Date: November 2025
+*
+* Purpose: Step 3a of Sentiment Pipeline
+*    Extract targeted political sentences from each Reddit comment.
+*    For every comment:
+*        - Build full_text = title + body
+*        - Split into sentences and match them with party-specific keywords
+*        - Collect and merge all matched sentences per party
+*    Output one row per (comment, party, targeted_sentence),
+*    which is later used for Transformer and VADER sentiment scoring.
+*
+"""
+
 import re
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
@@ -70,7 +86,8 @@ extract_udf = F.udf(extract_party_text, MapType(StringType(), StringType()))
 # ---------------------------------------------------------
 # 3. Load data
 # ---------------------------------------------------------
-
+# IMPORTANT NOTES:
+#    Input path is HARD-CODED and must be manually changed before running:
 df = spark.read.json("joined_rdd/2025-*")
 
 df = df.withColumn(
@@ -98,7 +115,8 @@ df_final = (
 # ---------------------------------------------------------
 # 5. Save
 # ---------------------------------------------------------
-
+# IMPORTANT NOTES:
+#    Output path is HARD-CODED and must be manually changed before running:
 df_final.write.mode("overwrite").json("results/party_target_ updated_keywords")
 
 print("Saved → results/party_target_updated_keywords")

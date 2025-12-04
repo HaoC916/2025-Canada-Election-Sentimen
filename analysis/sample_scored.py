@@ -1,3 +1,14 @@
+"""
+* Program: sample_scored.py
+*
+* Modified Date: December 2025
+*
+* Purpose: Randomly down-sample large scored sentiment JSON files
+*          (vader_tran_scored_updated_key/part-*.json)
+*          into a smaller JSONL file (vader_tran_scored_sample.json)
+*          for the dashboard and quick debugging.
+"""
+
 import json
 import random
 import glob

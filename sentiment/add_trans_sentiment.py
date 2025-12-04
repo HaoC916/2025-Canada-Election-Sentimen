@@ -1,3 +1,20 @@
+"""
+* Program: add_trans_sentiment.py
+*
+* Modified Date: November 2025
+*
+* Purpose: Step 3b of Sentiment Pipeline
+*    Apply Transformer-based sentiment scoring (RoBERTa model)
+*    to the targeted political sentences extracted in Step 3a.
+*
+*    For each record:
+*       - Load the merged targeted sentence
+*       - Run it through CardiffNLP's RoBERTa sentiment classifier
+*       - Assign a label in {negative=0, neutral=1, positive=2}
+*       - Write out the enriched JSONL file with `trans_sentiment`
+*
+"""
+
 import os
 import json
 import time
@@ -5,15 +22,27 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 from tqdm import tqdm
 
+
+
 # -----------------------------------------
 # PATH CONFIG
+# IMPORTANT NOTES:
+#    This script uses HARD-CODED input/output paths.
+#    Before running, users MUST manually update:
+#        INPUT_DIR  = <path to party_target folder>
+#        OUTPUT_DIR = <path to save transformer sentiment outputs>
+#    Otherwise the script will NOT run or will read/write to incorrect locations.
 # -----------------------------------------
+
 INPUT_DIR = r"E:\E\university\year6\cmpt732\cmpt732-project\joined_rdd\party_target"
 OUTPUT_DIR = r"E:\E\university\year6\cmpt732\cmpt732-project\result_sentiment"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # -----------------------------------------
 # LOAD MODEL
+# Device Notes:
+#    - If CUDA (NVIDIA GPU) is available, the model runs on GPU.
+#    - On CPU-only machines (e.g., Intel Mac), runtime will be extremely slow.
 # -----------------------------------------
 MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment"
 print("Loading model:", MODEL_NAME)

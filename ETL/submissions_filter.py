@@ -3,7 +3,7 @@
 *
 * Modified Date: November 2025
 *
-* Purpose: Step 1b of Reddit ETL
+* Purpose: Step 2b of Reddit ETL
 *    Filter and clean monthly Reddit submissions,
 *    keep only needed fields for joining with comments.
 """

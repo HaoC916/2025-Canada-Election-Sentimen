@@ -1,3 +1,13 @@
+"""
+* Program: dashboard.py
+*
+* Modified Date: December 2025
+*
+* Purpose: Interactive Streamlit dashboard to explore Reddit sentiment and polling:
+*          loads pre-aggregated daily/weekly sentiment, merges with polls,
+*          and visualizes time-series, correlations, regressions, and raw samples.
+"""
+
 import streamlit as st
 import pandas as pd
 import numpy as np

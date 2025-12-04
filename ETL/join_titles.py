@@ -3,7 +3,7 @@
 *
 * Modified Date: November 2025
 *
-* Purpose: Step 1c of Reddit ETL
+* Purpose: Step 2c of Reddit ETL
 *    Join cleaned comments with cleaned submissions by link_id_short/id
 *    to add the submission title to each comment;
 *    if no title can be added, keep the title filed empty.

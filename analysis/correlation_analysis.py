@@ -1,3 +1,29 @@
+"""
+* Program: correlation_analysis.py
+*
+* Modified Date: November 2025
+*
+* Purpose: Step 4b of Sentiment Analysis Pipeline
+*    Compare weekly and daily Reddit sentiment with national polling data,
+*    compute correlations, generate regression models, and produce plots.
+*
+*    This script performs:
+*        - Pearson & Spearman correlations (weekly + daily)
+*        - Lag analysis:
+*              weekly  : lag 0-1
+*              daily   : lag 0-5 days
+*        - Regression models (OLS) for each party:
+*              PollSupport_t = β0 + β1 * Sentiment_t + ε
+*        - Visualization:
+*              * Heatmaps for TRANS/VADER correlations
+*              * Regression scatterplots with fitted lines
+*        - Logging all printed output into a log file
+*
+* This script completes the analysis pipeline by quantifying how closely
+* Reddit sentiment aligns with real-world polling trends.
+*
+"""
+
 import pandas as pd
 from scipy.stats import pearsonr, spearmanr
 import os
@@ -35,6 +61,10 @@ sys.stdout = Tee(LOG_FILE)
 
 # ============================================================
 # 1. Load data
+# Important Notes:
+#    - Paths for sentiment and polling files are HARD-CODED and MUST be
+#      updated before running if directory structure differs.
+#    - Only the first part-00000 file is loaded by default — modify as needed.
 # ============================================================
 
 # sent_daily = pd.read_json("data/sentiment_daily_updated_key/part-00000-26623bf6-32d4-42a0-be59-19b77768579d-c000.json", lines=True)

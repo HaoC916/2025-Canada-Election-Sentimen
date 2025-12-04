@@ -4,7 +4,7 @@
 *
 * Modified Date: November 2025
 *
-* Purpose: Step 1a of Reddit ETL
+* Purpose: Step 2a of Reddit ETL
 *    Filter and clean monthly Reddit comments,
 *    keep only needed fields for later joining with submissions.
 *
