@@ -200,14 +200,41 @@ spark-submit sentiment/extract_party_sentences.py <joined_input_dir> <party_targ
 Example:
 ```
 spark-submit sentiment/extract_party_sentences.py \
-    "/Users/ryan/732_datasets/project/reddit/joined/2025-*" \
-    "/Users/ryan/732_datasets/project/reddit/party_target/2025"
+    "/Users/ryan/datasets/reddit/joined/2025-*" \
+    "/Users/ryan/datasets/reddit/party_target/2025"
 ```
 
+🔹 Step 3b — Extract Party Sentences
+```
+python sentiment/add_trans_sentiment.py <party_target_dir> <trans_sentiment_output_dir>
+```
+
+Example:
+```
+python sentiment/add_trans_sentiment.py \
+    /Users/ryan/datasets/reddit/party_target/ \
+    /Users/ryan/datasets/reddit/trans_sentiment/
+```
+
+🔹 Step 3c — Baseline Vader
+```
+python sentiment/baseline_vader.py <trans_scored_dir> <vader_output_dir>
+```
+
+Example:
+```
+python sentiment/baseline_vader.py \
+    /Users/ryan/datasets/reddit/trans_sentiment/2025 \
+    /Users/ryan/datasets/reddit/vader_sentiment/2025
+```
 ---
 
-## 3. Transformer Sentiment
+## 4. Analysis
 
+
+🔹 Step 4a Data Aggregation
+
+🔹 Step 4b Correlation Analysis      
 ```
 python sentiment/transformer_sentiment.py
 ```
@@ -216,48 +243,6 @@ Output saved to:
 
 ```
 results/transformer/
-```
-
----
-
-## 4. Weekly Aggregation
-
-```
-python analysis/weekly_aggregation.py
-```
-
-Output:
-
-```
-results/weekly_sentiment/
-```
-
----
-
-## 5. Merge Sentiment With Polling Data
-
-```
-python analysis/merge_polls.py
-```
-
-Output:
-
-```
-results/merged/
-```
-
----
-
-## 6. Generate Final Plots
-
-```
-python analysis/plot_results.py
-```
-
-Figures saved to:
-
-```
-results/figures/
 ```
 
 ---

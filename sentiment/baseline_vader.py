@@ -19,6 +19,7 @@
 """
 
 import re
+import sys
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.types import (
@@ -40,7 +41,10 @@ analyzer = SentimentIntensityAnalyzer()
 # IMPORTANT NOTES:
 # The input path is currently HARD-CODED and MUST be modified before running
 # ------------------------------------------------
-df = spark.read.json("results/tran_scored_updated_keywords")  
+#df = spark.read.json("results/tran_scored_updated_keywords") 
+input_path = sys.argv[1]      # path to <trans_scored_dir>  (output of 3b)
+df = spark.read.json(input_path)
+ 
 # expected columns: id, party, targeted_sentence, date, week
 
 # ------------------------------------------------
@@ -61,6 +65,8 @@ df_scored = df.withColumn("vader_score", vader_udf("targeted_sentence")).drop("f
 # The output path is currently HARD-CODED and MUST be modified before running
 # ---------------------------------------------------------
 
-df_scored.write.mode("overwrite").json("results/vader_tran_scored")
+#df_scored.write.mode("overwrite").json("results/vader_tran_scored")
+output_path = sys.argv[2]     # path to <vader_output_dir>
+df_scored.write.mode("overwrite").json(output_path)
 
 print("Saved targeted VADER sentiment pipeline output → results/vader_tran_scored")

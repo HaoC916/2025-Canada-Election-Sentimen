@@ -18,6 +18,7 @@
 import os
 import json
 import time
+import argparse
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 from tqdm import tqdm
@@ -32,8 +33,16 @@ from tqdm import tqdm
 #    Otherwise the script will NOT run or will read/write to incorrect locations.
 # -----------------------------------------
 
-INPUT_DIR = r"E:\E\university\year6\cmpt732\cmpt732-project\joined_rdd\party_target"
-OUTPUT_DIR = r"E:\E\university\year6\cmpt732\cmpt732-project\result_sentiment"
+#INPUT_DIR = r"E:\E\university\year6\cmpt732\cmpt732-project\joined_rdd\party_target"
+#OUTPUT_DIR = r"E:\E\university\year6\cmpt732\cmpt732-project\result_sentiment"
+#os.makedirs(OUTPUT_DIR, exist_ok=True)
+ap = argparse.ArgumentParser()
+ap.add_argument("input_dir", help="path to party_target folder")
+ap.add_argument("output_dir", help="path to save transformer sentiment outputs")
+args = ap.parse_args()
+
+INPUT_DIR = args.input_dir
+OUTPUT_DIR = args.output_dir
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # -----------------------------------------
