@@ -11,7 +11,7 @@ import sys
 # CUSTOM OUTPUT DIRECTORY (only change here)
 # ============================================================
 
-OUTPUT_DIR = "results"          # <--- 修改这里
+OUTPUT_DIR = "results"          
 PLOT_DIR = os.path.join(OUTPUT_DIR, "plots_old")
 LOG_FILE = os.path.join(OUTPUT_DIR, "output_log_old.txt")
 
