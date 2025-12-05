@@ -335,6 +335,7 @@ Transformer vs VADER comparison
 ---
 
 # 👥 Authors
-[][][]
+Luna Sang, Ryan Chen, Zili Ding
+
 CMPT 732 Group — Fall 2025  
 SFU School of Computing Science
