@@ -6,6 +6,15 @@
 * Purpose: Interactive Streamlit dashboard to explore Reddit sentiment and polling:
 *          loads pre-aggregated daily/weekly sentiment, merges with polls,
 *          and visualizes time-series, correlations, regressions, and raw samples.
+*          
+*          Data is loaded from (already stored in the data/ folder):
+*              - data/sentiment_daily_updated_key/part-*.json
+*              - data/sentiment_weekly_updated_key/part-*.json
+*              - data/polling_averages.txt
+*              - data/vader_tran_scored_sample.json (sampled scored comments)
+*          Modify paths if needed.
+*         
+* Note: Used ChatGPT to help learning streamlit in order to implement UI dashboard.
 """
 
 import streamlit as st
@@ -24,7 +33,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ============================================
 # Helper: Load JSON folder with part-*.json files
-# Used ChatGPT to help write codes
 # ============================================
 def load_json_folder(rel_folder, pattern="part-*.json", time_col=None, int_cols=None, name=""):
     """

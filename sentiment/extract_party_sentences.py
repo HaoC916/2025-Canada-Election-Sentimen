@@ -23,12 +23,12 @@ from pyspark.sql.types import MapType, StringType
 # -------------------------------
 # 0. Parse arguments
 # -------------------------------
-if len(sys.argv) != 3:
+if len(sys.argv) < 3:
     print("Usage: spark-submit extract_party_sentences.py <input_dir> <output_dir>")
     sys.exit(1)
 
-INPUT_DIR = sys.argv[1]     # e.g., results/joined_rdd/2025-*
-OUTPUT_DIR = sys.argv[2]    # e.g., results/party_target_updated_keywords
+INPUT_DIR = sys.argv[1]     # e.g., data/joined_rdd/2025-*
+OUTPUT_DIR = sys.argv[2]    # e.g., data/party_target_updated_keywords
 
 print("INPUT_DIR :", INPUT_DIR)
 print("OUTPUT_DIR:", OUTPUT_DIR)
@@ -129,7 +129,7 @@ df_final = (
 # ---------------------------------------------------------
 # 5. Save
 # ---------------------------------------------------------
-#df_final.write.mode("overwrite").json("results/party_target_ updated_keywords")
+#df_final.write.mode("overwrite").json("results/party_target_updated_keywords")
 df_final.write.mode("overwrite").json(OUTPUT_DIR)
 #print("Saved → results/party_target_updated_keywords")
 print(f"Saved → {OUTPUT_DIR}")

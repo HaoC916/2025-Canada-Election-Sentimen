@@ -19,7 +19,7 @@ import os
 # ===============================
 SAMPLE_RATIO = 0.001   # 0.1% sample 
 
-INPUT_PATTERN = "results/vader_tran_scored_updated_key/part-*.json"
+INPUT_PATTERN = "data/vader_tran_scored_updated_key/part-*.json"
 OUTPUT_FILE = "results/vader_tran_scored_sample.json"
 
 # ===============================

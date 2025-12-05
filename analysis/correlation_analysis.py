@@ -38,8 +38,8 @@ import sys
 # ============================================================
 
 OUTPUT_DIR = "results"          
-PLOT_DIR = os.path.join(OUTPUT_DIR, "plots_old")
-LOG_FILE = os.path.join(OUTPUT_DIR, "output_log_old.txt")
+PLOT_DIR = os.path.join(OUTPUT_DIR, "plots")
+LOG_FILE = os.path.join(OUTPUT_DIR, "output_log.txt")
 
 os.makedirs(PLOT_DIR, exist_ok=True)
 
@@ -62,16 +62,18 @@ sys.stdout = Tee(LOG_FILE)
 # ============================================================
 # 1. Load data
 # Important Notes:
-#    - Paths for sentiment and polling files are HARD-CODED and MUST be
+#    - Paths for sentiment and polling files are HARD-CODED 
+#       (already stored in the data folder) and MUST be
 #      updated before running if directory structure differs.
-#    - Only the first part-00000 file is loaded by default — modify as needed.
+#    - Using the "_updated_key" sentiment files for the analysis.
 # ============================================================
 
-# sent_daily = pd.read_json("data/sentiment_daily_updated_key/part-00000-26623bf6-32d4-42a0-be59-19b77768579d-c000.json", lines=True)
-# sent_weekly = pd.read_json("data/sentiment_weekly_updated_key/part-00000-781e3a70-de8c-4e41-b49b-ec42dfd96bbe-c000.json", lines=True)
+sent_daily = pd.read_json("data/sentiment_daily_updated_key/part-00000-26623bf6-32d4-42a0-be59-19b77768579d-c000.json", lines=True)
+sent_weekly = pd.read_json("data/sentiment_weekly_updated_key/part-00000-781e3a70-de8c-4e41-b49b-ec42dfd96bbe-c000.json", lines=True)
 
-sent_daily = pd.read_json("data/sentiment_daily/part-00000-d71794f2-a3cc-4580-8037-16a0a9af8fc0-c000.json", lines=True)
-sent_weekly = pd.read_json("data/sentiment_weekly/part-00000-bfe96b1c-7e79-4691-943b-29703d5791c9-c000.json", lines=True)
+# Alternative: if using non-updated key files
+# sent_daily = pd.read_json("data/sentiment_daily/part-00000-d71794f2-a3cc-4580-8037-16a0a9af8fc0-c000.json", lines=True)
+# sent_weekly = pd.read_json("data/sentiment_weekly/part-00000-bfe96b1c-7e79-4691-943b-29703d5791c9-c000.json", lines=True)
 
 
 polling = pd.read_csv("data/polling_averages.txt", sep="\s+")

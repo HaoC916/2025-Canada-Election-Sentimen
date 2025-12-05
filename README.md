@@ -29,7 +29,7 @@ election-sentiment-2025/
 │   ├── sentiment_weekly_updated_key/
 │   ├── polling_averages.txt
 │   ├── probability_winning.txt
-│   └──  vader_tran_scored_sample.json
+│   └── vader_tran_scored_sample.json
 │
 ├── ETL/
 │   ├── filter_comments_zst.py       # Step 1a: RC_YYYY-MM.zst → filtered JSONL
@@ -51,12 +51,7 @@ election-sentiment-2025/
 │   └── sample_scored.py
 │
 └── results/
-    ├── vader_targeted/
-    ├── transformer/
-    ├── sentiment_daily/
-    ├── sentiment_weekly/
-    ├── merged/
-    └── figures/
+
 ```
 
 ---
@@ -73,11 +68,9 @@ pip install -r requirements.txt
 If you want to verify functionality without re-running Steps 1–3,
 all they need to run is:
 ```
-python analysis/data_aggregation.py
 python analysis/correlation_analysis.py
 streamlit run analysis/dashboard.py
 ```
-All of these use the sample data stored inside data/.
 
 # 🚀 Running the Full Pipeline
 
@@ -199,14 +192,16 @@ spark-submit ETL/join_titles.py \
 
 ---
 
-## 3. Sentiment
+## 3. Sentiment （Requires 5~30 hours to finish）
 
-📦 (Optional) Skip Step 3 — Download Pre-Computed Sentiment Data
+📦 Skip Step 3? —> Download Pre-Computed Sentiment Data
 
 If you do NOT want to rerun the Transformer/VADER scoring (very slow without GPU),
 download our pre-computed Step 3 output from Google Drive:
 
 👉 https://drive.google.com/file/d/1bXJ_JlQu_xzUsRbajEGasY8UCPJ51-57/view?usp=drive_link 
+
+After downloading the data file, extract to the data/ folder, and continue with step 4.
 
 🔹 Step 3a — Extract Party Sentences
 
@@ -216,21 +211,21 @@ spark-submit sentiment/extract_party_sentences.py <joined_input_dir> <party_targ
 
 Example:
 ```
-spark-submit sentiment/extract_party_sentences.py \
-    "/Users/ryan/datasets/reddit/joined/2025-*" \
-    "/Users/ryan/datasets/reddit/party_target/2025"
+spark-submit sentiment/extract_party_sentences.py data/joined/2025-* data/party_target_updated_keywords
 ```
 
 🔹 Step 3b — Extract Party Sentences
 ```
-python sentiment/add_trans_sentiment.py <party_target_dir> <trans_sentiment_output_dir>
+spark-submit sentiment/extract_party_sentences.py \
+    'data/joined/2025-*' \
+    data/party_target_updated_keywords
 ```
 
 Example:
 ```
 python sentiment/add_trans_sentiment.py \
-    /Users/ryan/datasets/reddit/party_target/ \
-    /Users/ryan/datasets/reddit/trans_sentiment/
+    'data/party_target_updated_keywords' \
+    data/trans_sentiment
 ```
 
 🔹 Step 3c — Baseline Vader
@@ -241,101 +236,116 @@ python sentiment/baseline_vader.py <trans_scored_dir> <vader_output_dir>
 Example:
 ```
 python sentiment/baseline_vader.py \
-    /Users/ryan/datasets/reddit/trans_sentiment/2025 \
-    /Users/ryan/datasets/reddit/vader_sentiment/2025
+    'data/trans_sentiment' \
+    data/vader_tran_scored_updated_keywords
 ```
 ---
 
 ## 4. Analysis
+
+### Important Notes
+Before running Step 4, you **must have the scored sentiment dataset**.
+
+You can obtain it in one of two ways:
+
+1. **Download our pre-scored dataset**  
+   👉 https://drive.google.com/file/d/1bXJ_JlQu_xzUsRbajEGasY8UCPJ51-57/view?usp=drive_link  
+   Extract the downloaded file into the `data/` folder.
+
+2. **Or generate it** by running Step 3 sentiment scoring scripts  
+   (see Step 3 section in this README).
+
+---
+
+## What Step 4 Does
+
 This stage performs:
 
-Weekly & Daily sentiment aggregation (Transformer + VADER)
+- Weekly & daily sentiment aggregation (Transformer + VADER)  
+- Correlation analysis against Canadian polling data  
+- Regression modeling  
+- Visualization (heatmaps + regression plots)  
+- Interactive dashboard (Streamlit)
 
-Correlation analysis against Canadian polling data
+You may run Step 4 using either:
 
-Regression modeling
+- Your own Step 3 computation outputs, **or**  
+- Our included sample dataset (recommended for quick testing)
 
-Visualization (heatmaps + regression plots)
+---
 
-Interactive dashboard using Streamlit
+## 🔹 Step 4a — Weekly & Daily Aggregation
 
-You can run the analysis on either:
-
-Your own computed sentiment outputs (from Step 3), OR
-
-Our sample dataset included in data/ (recommended for quick testing).
-
-🔹 Step 4a — Weekly & Daily Aggregation
-
+Run:
 ```
 python analysis/data_aggregation.py
 ```
 
-Input used by default:
+**Default Input:**
 ```
-data/vader_tran_scored_sample.json
+data/vader_tran_scored_updated_key
 ```
 
-Outputs:
+**Outputs:**
 ```
-results/sentiment_weekly_updated_key/
-results/sentiment_daily_updated_key/
+data/sentiment_weekly_updated_key/
+data/sentiment_daily_updated_key/
 ```
-These files become inputs for Step 4b.
 
-🔹 Step 4b Sentiment–Polling Correlation Analysis     
+These files will be used in Step 4b.
+
+---
+
+## 🔹 Step 4b — Sentiment–Polling Correlation Analysis
+
+Run:
 ```
 python analysis/correlation_analysis.py
 ```
 
 This step:
 
-Computes Pearson & Spearman correlations
+- Computes **Pearson & Spearman** correlations  
+- Computes **lag correlations**  
+- Fits **OLS regressions**  
+- Generates all visualizations
 
-Computes lag correlations
-
-Fits OLS regressions
-
-Saves all visualizations to:
-
+Results saved to:
 ```
-results/plots_old/
+results/plots/
 ```
 
-and logs printed output to:
+Printed log saved to:
 ```
-results/output_log_old.txt
+results/output_log.txt
 ```
 
-🔹 Step 4c — Interactive Dashboard (Streamlit)
+---
 
-To view the web-based dashboard:
+## 🔹 Step 4c — Interactive Dashboard (Streamlit)
+
+Run the dashboard:
+
 ```
 streamlit run analysis/dashboard.py
 ```
 
-Once running, open:
+Then open:
 
 👉 http://localhost:8501
 
-The dashboard includes:
+Dashboard features:
 
-Weekly sentiment trends
-
-Daily sentiment trends
-
-Party comparisons
-
-Correlation visualizations
-
-Volume statistics
-
-Transformer vs VADER comparison
+- Weekly sentiment trends  
+- Daily sentiment trends  
+- Party comparisons  
+- Correlation visualizations  
+- Volume statistics  
+- Transformer vs VADER comparison  
 
 ---
 
-# 👥 Authors
-Luna Sang, Ryan Chen, Zili Ding
-
+## 👥 Authors
+**Luna Sang**, **Ryan Chen**, **Zili Ding**  
 CMPT 732 Group — Fall 2025  
 SFU School of Computing Science
