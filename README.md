@@ -1,6 +1,8 @@
 # 🇨🇦 Election Sentiment 2025  
 ### *CMPT 732 — Big Data Final Project*
 
+This project was originally developed as part of a graduate-level Big Data course and has been refactored and published for portfolio purposes.
+
 This project analyzes **Canadian political sentiment** across Reddit and compares it with **federal election polling trends**.  
 We implement:
 
