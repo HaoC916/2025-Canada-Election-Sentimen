@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import SentimentChart from './components/SentimentChart'
 import VolumeChart from './components/VolumeChart'
 import CorrelationGrid from './components/CorrelationGrid'
+import StatCards, { fmtCompact } from './components/StatCards'
 import { buildDailySeries, buildWeeklySeries } from './utils/series'
 import type { Party } from './types'
 
@@ -30,15 +31,6 @@ const meta = metaData as Meta
 const PARTIES: Party[] = ['Liberal', 'Conservative', 'NDP']
 const POLL_COL = { Liberal: 'lpc', Conservative: 'cpc', NDP: 'ndp' } as const
 
-function fmtLongDate(iso: string) {
-  return new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-CA', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: 'UTC',
-  })
-}
-
 function segButton(active: boolean) {
   return `px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
     active ? 'bg-neutral-900 text-white' : 'bg-white text-neutral-600 hover:bg-neutral-100'
@@ -62,16 +54,23 @@ export default function App() {
     <div className="min-h-screen bg-[#f7f7f5]">
       <div className="mx-auto max-w-4xl px-5 py-10">
         <header className="mb-8">
-          <p className="text-sm font-medium text-neutral-500">CMPT 732 · Big Data · Fall 2025</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl">
-            🇨🇦 Election Sentiment Explorer
+          <h1 className="text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl">
+            Canada Election Sentiment Explorer 🇨🇦
           </h1>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-neutral-600">
-            {meta.commentsScanned.toLocaleString()} raw Reddit comments (Dec 2024 – Apr 2025),
-            filtered down to {meta.targetedSentences.toLocaleString()} sentences that actually
-            target a federal party, scored with VADER and a RoBERTa transformer, and checked
-            against real polling averages through the {fmtLongDate(meta.electionDay)} election.
+          <p className="mt-1 max-w-2xl text-[15px] text-neutral-600">
+            Does a party&apos;s mood on Reddit actually track how it polls?
           </p>
+
+          <div className="mt-5">
+            <StatCards meta={meta} />
+          </div>
+
+          <div className="mt-3 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
+            <span className="font-semibold text-neutral-900">The finding: </span>
+            weekly sentiment tracked the polls for Liberals (r&nbsp;=&nbsp;0.81) and
+            Conservatives (r&nbsp;=&nbsp;−0.68) — but day-to-day noise washed the signal out
+            entirely.
+          </div>
         </header>
 
         <section className="mb-6 rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5">
@@ -130,7 +129,7 @@ export default function App() {
             average, at increasing lag. Blue = sentiment moves with the poll, red = it moves
             against it. Weekly aggregation cancels out day-to-day noise; daily doesn&apos;t.
           </p>
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-6">
             <CorrelationGrid
               rows={correlations.weekly}
               lags={[0, 1]}
@@ -150,18 +149,14 @@ export default function App() {
 
         <footer className="pb-6 text-xs leading-relaxed text-neutral-500">
           <p>
-            All numbers here are real pipeline output, not reconstructed:{' '}
-            {meta.commentsScanned.toLocaleString()} raw Reddit comments were scanned across four
-            monthly dumps, {meta.commentsKeptAfterFilter.toLocaleString()} survived the initial
-            filter, and {meta.targetedSentences.toLocaleString()} party-targeted sentences were
-            scored with VADER and CardiffNLP&apos;s{' '}
-            <code className="rounded bg-neutral-100 px-1 py-0.5">{meta.transformerModel}</code>.
-            Aggregated into {meta.weeklyWeekRange[1]} weekly and {meta.dailyBucketCount} daily
-            buckets ({meta.dailyDateRange[0]} to {meta.dailyDateRange[1]}), correlated against
-            public polling averages.
+            Real pipeline output, not reconstructed — {fmtCompact(meta.commentsScanned)} comments
+            scanned, {fmtCompact(meta.targetedSentences)} party-targeted sentences scored with
+            VADER + CardiffNLP RoBERTa, aggregated into {meta.weeklyWeekRange[1]} weekly and{' '}
+            {meta.dailyBucketCount} daily buckets and correlated against public polling.
           </p>
           <p className="mt-2">
-            Built by Luna Sang, Ryan Chen, and Zili Ding for CMPT 732 (SFU). Source:{' '}
+            Built by Ryan Chen, with teammates Luna Sang and Zili Ding (CMPT 732 group project,
+            SFU). Source:{' '}
             <a
               className="underline"
               href="https://github.com/HaoC916/2025-Canada-Election-Sentimen"

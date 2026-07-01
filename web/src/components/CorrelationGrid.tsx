@@ -27,7 +27,7 @@ export default function CorrelationGrid({ rows, lags, model, title, lagUnit }: P
   return (
     <div className="overflow-x-auto">
       <p className="mb-2 text-sm font-medium text-neutral-600">{title}</p>
-      <table className="w-full min-w-[420px] border-collapse text-sm">
+      <table className="w-full border-collapse text-sm">
         <thead>
           <tr>
             <th className="p-2 text-left font-medium text-neutral-500">Party</th>

@@ -37,8 +37,15 @@ export default function SentimentChart({ data, party, model, electionDay, finalR
   const showElectionMarkers = electionTs >= minTs - dayMs && electionTs <= maxTs + dayMs
 
   return (
-    <ResponsiveContainer width="100%" height={340}>
-      <ComposedChart data={rows} margin={{ top: 10, right: 16, left: 0, bottom: 4 }}>
+    <div>
+      {showElectionMarkers && (
+        <p className="mb-1 flex items-center gap-1.5 text-xs text-neutral-500">
+          <span className="inline-block h-2 w-2 rounded-full bg-neutral-900" aria-hidden="true" />
+          Election day marker — final result {finalResult}%
+        </p>
+      )}
+      <ResponsiveContainer width="100%" height={360}>
+        <ComposedChart data={rows} margin={{ top: 12, right: 40, left: 4, bottom: 4 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#e9e8e3" />
         <XAxis
           dataKey="ts"
@@ -50,7 +57,7 @@ export default function SentimentChart({ data, party, model, electionDay, finalR
         <YAxis
           yAxisId="sentiment"
           tick={{ fontSize: 12, fill: '#6b6b66' }}
-          width={46}
+          width={50}
           label={{
             value: model === 'vader' ? 'VADER score' : 'Transformer pos. ratio',
             angle: -90,
@@ -62,7 +69,7 @@ export default function SentimentChart({ data, party, model, electionDay, finalR
           yAxisId="polling"
           orientation="right"
           tick={{ fontSize: 12, fill: '#6b6b66' }}
-          width={40}
+          width={56}
           label={{
             value: 'Polling %',
             angle: 90,
@@ -86,7 +93,6 @@ export default function SentimentChart({ data, party, model, electionDay, finalR
             x={electionTs}
             stroke="#1c1c1e"
             strokeDasharray="4 4"
-            label={{ value: 'Election Day', position: 'top', fontSize: 11 }}
           />
         )}
         {showElectionMarkers && (
@@ -97,7 +103,6 @@ export default function SentimentChart({ data, party, model, electionDay, finalR
             r={5}
             fill="#1c1c1e"
             stroke="none"
-            label={{ value: `Final: ${finalResult}%`, position: 'top', fontSize: 11 }}
           />
         )}
         <Line
@@ -122,6 +127,7 @@ export default function SentimentChart({ data, party, model, electionDay, finalR
           isAnimationActive={false}
         />
       </ComposedChart>
-    </ResponsiveContainer>
+      </ResponsiveContainer>
+    </div>
   )
 }
