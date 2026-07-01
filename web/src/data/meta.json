@@ -1,0 +1,23 @@
+{
+  "commentsScanned": 1272871484,
+  "commentsKeptAfterFilter": 2138606,
+  "submissionsScanned": 154510340,
+  "submissionsKeptAfterFilter": 55696,
+  "targetedSentences": 2120406,
+  "dailyDateRange": [
+    "2024-12-31",
+    "2025-04-30"
+  ],
+  "dailyBucketCount": 121,
+  "weeklyWeekRange": [
+    1,
+    18
+  ],
+  "electionDay": "2025-04-27",
+  "finalResults": {
+    "lpc": 42,
+    "cpc": 38,
+    "ndp": 17
+  },
+  "transformerModel": "cardiffnlp/twitter-roberta-base-sentiment"
+}
