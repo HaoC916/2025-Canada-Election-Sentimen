@@ -1,5 +1,7 @@
 # Election Sentiment Explorer
 
+**Live:** https://haoc916.github.io/2025-Canada-Election-Sentimen/
+
 A static React app that visualizes this project's real output: weekly/daily Reddit
 sentiment per federal party (VADER + RoBERTa transformer), plotted against real
 polling averages through the 2025-04-27 election, plus the Pearson correlation
