@@ -1,7 +1,13 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   color-scheme: light;
+}
+
+:root.dark {
+  color-scheme: dark;
 }
 
 body {
@@ -14,4 +20,9 @@ body {
     'Segoe UI',
     Roboto,
     sans-serif;
+}
+
+.dark body {
+  background: #17181a;
+  color: #e7e7e5;
 }

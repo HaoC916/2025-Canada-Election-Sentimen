@@ -16,6 +16,12 @@ export interface SeriesPoint {
   volume: number
 }
 
+export function fmtCompact(n: number) {
+  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(2)}B`
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`
+  return n.toLocaleString()
+}
+
 const WEEK_1_START = new Date('2025-01-06T00:00:00Z')
 
 function weekToDate(week: number): string {
