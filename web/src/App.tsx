@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import SentimentChart from './components/SentimentChart'
 import VolumeChart from './components/VolumeChart'
 import CorrelationGrid from './components/CorrelationGrid'
-import { buildDailySeries, buildWeeklySeries } from './lib/series'
+import { buildDailySeries, buildWeeklySeries } from './utils/series'
 import type { Party } from './types'
 
 import weeklyData from './data/weekly.json'

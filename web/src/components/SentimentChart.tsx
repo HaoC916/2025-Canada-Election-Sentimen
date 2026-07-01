@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import type { SeriesPoint } from '../lib/series'
+import type { SeriesPoint } from '../utils/series'
 import type { Party } from '../types'
 import { PARTY_COLOR } from '../types'
 
